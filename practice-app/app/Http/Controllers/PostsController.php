@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Post;
+use App\Http\Requests\PostFormRequest;
+
 
 class PostsController extends Controller
 {
@@ -15,9 +17,8 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $posts = DB::table('posts')->get();
         return view('blogs.index', [
-            'posts' => $posts
+            'posts' => Post::orderBy('updated_at', 'desc')->paginate(20)
         ]);
     }
 
@@ -37,16 +38,9 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostFormRequest $request)
     {
-        $request->validate([
-            'title' => 'required|unique:posts|max:255',
-            'excerpt' => 'required',
-            'body' => 'required',
-            'image_path' => ['required', 'mimes:jpg,png,jpeg'],
-            'is_published' => '',
-            'min_to_read' => ''
-        ]);
+        $request->validated();
 
         Post::create([
             'title' => $request->title,
@@ -55,7 +49,6 @@ class PostsController extends Controller
             'image_path' => $this->storeImage($request),
             'is_published' => $request->is_published === 'on',
             'min_to_read' => $request->min_to_read
-
         ]);
 
         return redirect(route('blogs.index'));
@@ -82,7 +75,9 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('blogs.edit', [
+            'post' => Post::where('id', $id)->first()
+        ]);
     }
 
     /**
@@ -92,9 +87,14 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostFormRequest $request, $id)
     {
-        //
+        $request->validated();
+
+        
+        Post::where('id', $id)->update($request->except('_token', '_method'));
+
+        return redirect(route('blogs.index'));
     }
 
     /**
@@ -105,7 +105,9 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Post::destroy($id);
+
+        return redirect(route('blogs.index'))->with('message', 'Post has been deleted!');
     }
 
     private function storeImage($request)
