@@ -39,14 +39,24 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        $post = new Post();
-        $post->title = $request->title;
-        $post->body = $request->body;
-        $post->excerpt = $request->excerpt;
-        $post->image_path = 'temporary';
-        $post->is_published = $request->is_published === 'on';
-        $post->min_to_read = $request->min_to_read;
-        $post->save();
+        $request->validate([
+            'title' => 'required|unique:posts|max:255',
+            'excerpt' => 'required',
+            'body' => 'required',
+            'image_path' => ['required', 'mimes:jpg,png,jpeg'],
+            'is_published' => '',
+            'min_to_read' => ''
+        ]);
+
+        Post::create([
+            'title' => $request->title,
+            'excerpt' => $request->excerpt,
+            'body' => $request->body,
+            'image_path' => $this->storeImage($request),
+            'is_published' => $request->is_published === 'on',
+            'min_to_read' => $request->min_to_read
+
+        ]);
 
         return redirect(route('blogs.index'));
     }
@@ -96,5 +106,13 @@ class PostsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function storeImage($request)
+    {
+        $newImageName = uniqid() . '-' . $request->title . '.' .
+        $request->image->extension();
+
+        return $request->image->move(public_path('images'), $newImageName);
     }
 }
