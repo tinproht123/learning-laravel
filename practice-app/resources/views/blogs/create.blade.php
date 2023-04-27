@@ -15,7 +15,7 @@
         <hr class="border border-1 border-gray-300 mt-10">
     </div>
 
-<div class="m-auto pt-20">
+<div class="m-auto pt-20"> 
     <div class="pb-8">
         @if($errors->any())
             <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
