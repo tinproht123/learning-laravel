@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('post_comments', function (Blueprint $table) {
             $table->uuid('id');
             $table->primary('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('post_id');
+            $table->uuid('user_id');
+            $table->uuid('post_id');
+            $table->uuid('parent_id')->nullable();
             $table->text('body');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
-            
+
             $table->timestamps();
         });
     }

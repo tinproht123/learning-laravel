@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('votes', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('post_id');
+            $table->uuid('user_id');
+            $table->uuid('post_id');
             $table->integer('vote');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

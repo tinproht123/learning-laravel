@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('post_metas', function (Blueprint $table) {
             $table->uuid('id');
             $table->primary('id');
-            $table->unsignedBigInteger('post_id');
+            $table->uuid('post_id');
             $table->string('meta_description');
             $table->string('meta_robots');
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
