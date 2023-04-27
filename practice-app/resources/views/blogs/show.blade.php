@@ -5,6 +5,18 @@
         content="width=device-width, initial-scale=1.0"
     />
     <meta
+        name="description"
+        content="{{ $post->meta->meta_description ? $post->meta->meta_description : '' }}"
+    />
+    <meta
+        name="keywords"
+        content="{{ $post->meta->meta_keyword ? $post->meta->meta_keyword : '' }}"
+    />
+    <meta
+        name="robots"
+        content="{{ $post->meta->meta_robots ? $post->meta->meta_robots : '' }}"
+    />
+    <meta
         http-equiv="X-UA-Compatible"
         content="ie=edge"
     />
@@ -26,7 +38,7 @@
         </div>
 
         <h4 class="text-left sm:text-center text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 py-10 sm:py-20">
-            This is the title of our first blog article.
+            {{ $post->title }}
         </h4>
 
         <div class="block lg:flex flex-row">
@@ -36,9 +48,9 @@
                     <a
                         href=""
                         class="font-bold text-green-500 italic hover:text-green-400 hover:border-b-2 border-green-400 pb-3 transition-all py-20">
-                        Code With Dary
+                        {{ $post->user->name }}
                     </a>
-                    On 17-07-2022
+                    On {{ $post->created_at->format('d/m/Y') }}
                 </span>
             </div>
         </div>

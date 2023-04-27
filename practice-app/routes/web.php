@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostsController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\FallbackController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,25 +10,25 @@ use App\Http\Controllers\FallbackController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
-// Route::get('/blogs', [PostsController::class, 'index']);
-
-Route::prefix('/blogs')->group(function() {
-    Route::get('/create', [PostsController::class, 'create'])->name('blogs.create');
-    Route::post('/', [PostsController::class, 'store'])->name('blogs.store');
-    Route::get('/', [PostsController::class, 'index'])->name('blogs.index');
-    Route::get('/{id}', [PostsController::class, 'show'])->name('blogs.show');
-    Route::get('/edit/{id}', [PostsController::class, 'edit'])->name('blogs.edit');
-    Route::patch('/{id}', [PostsController::class, 'update'])->name('blogs.update');
-    Route::delete('/{id}', [PostsController::class, 'destroy'])->name('blogs.destroy');
+Route::get('/', function () {
+    return view('welcome');
 });
 
-//Route::match(['GET', 'POST'], '/blogs', [PostsController::class, 'index']);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/', HomeController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-Route::fallback(FallbackController::class);
+require __DIR__.'/auth.php';
+
+Route::resource('blogs', PostsController::class);
