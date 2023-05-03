@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->uuid('post_id');
+            $table->string('meta_title');
             $table->string('meta_description');
             $table->string('meta_robots');
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');

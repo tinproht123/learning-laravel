@@ -8,5 +8,8 @@
 </head>
 <body>
     <h1>Post</h1>
+    @foreach ($posts as $post)
+        <h3>{{ $post->title }}</h1>
+    @endforeach
 </body>
 </html>

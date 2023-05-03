@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostFormRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -13,7 +15,7 @@ class PostController extends Controller
     public function index()
     {
         return view('post.index', [
-            'post' => Post::orderBy('created_at', 'desc')->paginate(10)
+            'posts' => Post::orderBy('created_at', 'desc')->paginate(10)
         ]);
     }
 
@@ -22,15 +24,25 @@ class PostController extends Controller
      */
     public function create()
     {
-        
+        return view('post.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostFormRequest $request)
     {
-        //
+        $request->validated();
+
+        Post::create([
+            'title' => $request->title,
+            'body' => $request->body,
+            'summary' => $request->summary,
+            'user_id' => 1,
+            'slug' => Str::slug($request->title)
+        ]);
+
+        return redirect(route('post.index'));
     }
 
     /**
