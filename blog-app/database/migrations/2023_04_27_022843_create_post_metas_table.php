@@ -15,12 +15,13 @@ return new class extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->uuid('post_id');
-            $table->string('meta_title');
-            $table->string('meta_description');
-            $table->string('meta_robots');
+            $table->string('title')->nullable();
+            $table->string('robots')->nullable();
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
+        //meta keywords, meta tag -> loại bỏ vì không ảnh hưởng đến SEO
+        //meta description -> dùng $post->description thay thế, không cần thêm data vào DB
     }
 
     /**

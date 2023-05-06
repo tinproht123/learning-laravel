@@ -1,15 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Post</title>
-</head>
-<body>
-    <h1>Post</h1>
-    @foreach ($posts as $post)
-        <h3>{{ $post->title }}</h1>
-    @endforeach
-</body>
-</html>
+@extends('layouts.app')
+@section('content')
+    <main>
+        <div class="container">
+            <a href={{ route('blogs.create') }} class='btn btn-success rounded rounded-pill mb-3'>Create new Post</a>
+            <div>
+                <h4>Your posts</h4>
+                <ul class="list-group">
+                    @foreach ($posts as $post)
+                        <li class="list-group-item">
+                            <h3>{{ $post->title }}</h3>
+                            @foreach ($post->categories as $category)
+                            <div class='badge rounded-pill bg-primary'>{{ $category->title }}</div>
+                            @endforeach
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </main>
+@endsection

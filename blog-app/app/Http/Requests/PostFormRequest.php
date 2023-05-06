@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class PostFormRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class PostFormRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -22,9 +23,9 @@ class PostFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|unique:post|max:255, title,' . $this->id,
-            'post' => 'required',
-            'summary' => 'max:255'
+            'title' => 'required|unique:posts|max:255',
+            'category' => 'required',
+            'body' => 'required|min:20',
         ];
     }
 }

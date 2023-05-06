@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostFormRequest;
+use App\Models\Category;
 use App\Models\Post;
+use App\Models\PostMeta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
@@ -14,8 +17,11 @@ class PostController extends Controller
      */
     public function index()
     {
+        if(!Auth::check()){
+            return redirect('login');
+        }
         return view('post.index', [
-            'posts' => Post::orderBy('created_at', 'desc')->paginate(10)
+            'posts' => Post::with('categories')->orderBy('created_at', 'desc')->paginate(10)
         ]);
     }
 
@@ -24,7 +30,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('post.create');
+        $categories = Category::get();
+        return view('post.create')->with('categories', $categories);
     }
 
     /**
@@ -34,15 +41,25 @@ class PostController extends Controller
     {
         $request->validated();
 
-        Post::create([
+        $new_post = Post::create([
             'title' => $request->title,
             'body' => $request->body,
-            'summary' => $request->summary,
-            'user_id' => 1,
-            'slug' => Str::slug($request->title)
+            'user_id' => Auth::id(),
+            'slug' => Str::slug($request->title),
         ]);
 
-        return redirect(route('post.index'));
+        $category_id = Category::where('title', $request->category)->first()->numfmt_get_attribute;//error-bug
+        dd($category_id);
+
+        $new_post->categories()->attach($category_id);
+
+        PostMeta::create([
+            'post_id' => $new_post->id,
+            'title' => $new_post->title . '|Blog Amigos',
+            'robots' => ''
+        ]);
+
+        return redirect('blogs');
     }
 
     /**
@@ -76,4 +93,5 @@ class PostController extends Controller
     {
         //
     }
+
 }

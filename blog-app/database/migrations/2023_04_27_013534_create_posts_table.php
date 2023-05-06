@@ -19,7 +19,6 @@ return new class extends Migration
             $table->text('body');
             $table->integer('upvoted_number')->default(0);
             $table->integer('downvoted_number')->default(0);
-            $table->string('summary');
             $table->string('slug');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
