@@ -17,9 +17,6 @@ class PostController extends Controller
      */
     public function index()
     {
-        if(!Auth::check()){
-            return redirect('login');
-        }
         return view('post.index', [
             'posts' => Post::with('categories')->orderBy('created_at', 'desc')->paginate(10)
         ]);
@@ -30,8 +27,11 @@ class PostController extends Controller
      */
     public function create()
     {
-        $categories = Category::get();
-        return view('post.create')->with('categories', $categories);
+        if(Auth()->check()){
+            $categories = Category::get();
+            return view('post.create')->with('categories', $categories);
+        }
+        return redirect('login');
     }
 
     /**
@@ -48,8 +48,7 @@ class PostController extends Controller
             'slug' => Str::slug($request->title),
         ]);
 
-        $category_id = Category::where('title', $request->category)->first()->numfmt_get_attribute;//error-bug
-        dd($category_id);
+        $category_id = Category::where('title', $request->category)->first();
 
         $new_post->categories()->attach($category_id);
 
